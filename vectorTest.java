@@ -96,7 +96,6 @@ public class vectorTest extends Synth {
         setOutput(gainAmp);
 
         // GUI
-        // GUI
         JPanel padWrapper = new JPanel();
         padWrapper.setLayout(new BorderLayout());
         padWrapper.add(new JLabel("Vector"), BorderLayout.NORTH);
