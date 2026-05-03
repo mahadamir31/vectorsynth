@@ -82,7 +82,7 @@ public class vectorTest extends Synth {
         amp.setAmplitudeUnit(ampADSR);
         units.add(amp);
 
-        Dial gain = new Dial(1.0);
+        Dial gain = new Dial(0.02);
         units.add(gain.getUnit());
 
         Amplifier gainAmp = new Amplifier();
