@@ -1,9 +1,9 @@
-import synth.*;
+package synth;
 
-public class LPF extends Filter 
+public class LPF extends Filter
     {
     Unit frequencyUnit = new Constant(1.0);
-        
+
     public void setFrequencyUnit(Unit frequencyUnit) {
         this.frequencyUnit = frequencyUnit;
         }
@@ -13,7 +13,7 @@ public class LPF extends Filter
         }
 
     Unit resonanceUnit = new Constant(0.0);
-        
+
     public void setResonanceUnit(Unit resonanceUnit) {
         this.resonanceUnit = resonanceUnit;
         }
@@ -38,21 +38,21 @@ public class LPF extends Filter
        b[0] = 2.0 *Q /J;
        b[1] = Q/J;
        a[0]= (2.0*Q -2.0 *d2 *Q)/ J;
-       a[1]=(Q-d+d2 *Q)/J; 
-                
+       a[1]=(Q-d+d2 *Q)/J;
+
         //// IMPLEMENT ME
         }
-        
+
     public LPF()
         {
         super(2);
         }
-        
+
     public static final double MIN_CUTOFF = 0.001;       // Not permitted to divide by zero
     public static final double MAX_CUTOFF = 0.999;       // Numerical instability at Nyquist
     double lastCutoff = Double.NaN;
     double lastQ = Double.NaN;
-    public double tick(long tickCount) 
+    public double tick(long tickCount)
         {
         double q = (resonanceUnit.getValue() * 10 + 1.0) / Math.sqrt(2.0);
         double cutoff = frequencyUnit.getValue();

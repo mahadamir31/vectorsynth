@@ -1,15 +1,15 @@
-
+package synth;
 /**
    An oscillator which outputs a Band-Limited Triangle Wave by integrating over a Blit Square.
-   Alpha is updated as 1.0 - 0.1 * min(freq/1000, 1) to eliminate most pops.  The output is then 
-   scaled by 4 and offset by 0.5. 
+   Alpha is updated as 1.0 - 0.1 * min(freq/1000, 1) to eliminate most pops.  The output is then
+   scaled by 4 and offset by 0.5.
 */
 
-public class BlitTriangle extends BlitSquare 
+public class BlitTriangle extends BlitSquare
     {
     // This might prove useful
     double prev = 0;
-    
+
     protected double blitTriangle(long tickCount, double freq)
         {
         /// IMPLEMENT ME
@@ -24,8 +24,8 @@ public class BlitTriangle extends BlitSquare
         }
         return triangle;
         }
-        
-    public double tick(long tickCount) 
+
+    public double tick(long tickCount)
         {
         /// IMPLEMENT ME
         /// Be sure to grab the current phase

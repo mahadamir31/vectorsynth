@@ -1,4 +1,4 @@
-import synth.*;
+package synth;
 
 /**
    A mixer of some N INPUTS, each with a gain defined by an AMPLITUDE MOD.
@@ -8,7 +8,7 @@ public class Mixer extends Unit
     {
     Unit[] inputs;
     Unit[] amplitudeMods;
-    
+
     public Mixer(int numInputs)
         {
         /// IMPLEMENT ME
@@ -20,13 +20,13 @@ public class Mixer extends Unit
             amplitudeMods[i] = new Constant(0);
         }
         }
-        
+
     public Mixer(Unit[] inputs, Unit[] amplitudeMods)
         {
         this.inputs = inputs;
         this.amplitudeMods = amplitudeMods;
         }
-        
+
     public Unit getInput(int val) { return inputs[val]; }
     public void setInput(int val, Unit input) { inputs[val] = input; }
 

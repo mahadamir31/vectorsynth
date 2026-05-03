@@ -97,7 +97,14 @@ public class vectorSynth extends Synth
                 upGainAmp.setAmplitudeUnit(dial.getUnit());
             }
 
-            ADSR upAdsr
+            ADSR upADSR = new ADSR();
+            ADSR downADSR = new ADSR();
+            ADSR rightADSR = new ADSR();
+            ADSR leftADSR = new ADSR();
+
+            ADSR[] vectorADSRs = {upADSR, downADSR, rightADSR, leftADSR};
+
+            //for (int )
 
             // for (Amplifier amp: gainAmps){
 

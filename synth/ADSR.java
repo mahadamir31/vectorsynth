@@ -1,13 +1,13 @@
 // Copyright 2018 by George Mason University
 // Licensed under the Apache 2.0 License
 
-import synth.*;
+package synth;
 
-/** 
-    A TIME-based ADSR.  Make this linear.  
-*/      
-        
-public class ADSR extends Unit 
+/**
+    A TIME-based ADSR.  Make this linear.
+*/
+
+public class ADSR extends Unit
     {
     static final int START = 0;
     static final int ATTACK = 1;
@@ -22,7 +22,7 @@ public class ADSR extends Unit
     Unit sustainLevel = new Constant(1.0);
     Unit releaseTime = new Constant(0.01);
     Unit gate = new Constant(0);
-    
+
     // You should find these handy
     double startTime = 0;
     double endTime = 0;
@@ -46,7 +46,7 @@ public class ADSR extends Unit
     double getReleaseTime() { return releaseTime.getValue() * TIME_MULTIPLIER; }
     double getGate() { return gate.getValue(); }
 
-    public double tick(long tickCount) 
+    public double tick(long tickCount)
         {
         switch(state)
             {
@@ -78,7 +78,7 @@ public class ADSR extends Unit
                     endTime = tickCount +getDecayTime();
                     startLevel=getAttackLevel();
                     endLevel=getSustainLevel();
-                    state=DECAY;                    
+                    state=DECAY;
                 }
                 break;
             case DECAY:
@@ -128,7 +128,7 @@ public class ADSR extends Unit
                 System.err.println("ADSR Internal Error: this should be unreachable");
                 return 0.0;
             }
-        
+
         // If we have 0 time (startTime is >= endTime) return endLevel
         // Otherwise interpolate the level between start and end level using the tick count between start and end time
         // and return the interpolation

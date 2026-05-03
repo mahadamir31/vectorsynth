@@ -1,10 +1,10 @@
-
+package synth;
 /**
    An oscillator which outputs a Band-Limited Pulse Wave.  This is computed by integrating
-   across a BP-BLIT over time.  The output is then scaled by 0.7 and offset by 0.15. 
+   across a BP-BLIT over time.  The output is then scaled by 0.7 and offset by 0.15.
 */
 
-public class BlitSquare extends BPBlit 
+public class BlitSquare extends BPBlit
     {
     public static final double ALPHA = 0.001;
 
@@ -24,7 +24,7 @@ public class BlitSquare extends BPBlit
         return square;
         }
 
-    public double tick(long tickCount) 
+    public double tick(long tickCount)
         {
         /// IMPLEMENT ME
         /// Be sure to grab the current phase

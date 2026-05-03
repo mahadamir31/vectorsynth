@@ -1,4 +1,4 @@
-import synth.*;
+package synth;
 
 /**
    A superclass of Filter units.  You provide the initial filter constants as the a array (representing
@@ -8,10 +8,10 @@ import synth.*;
    the INPUT to the filter.
 **/
 
-public class Filter extends Unit 
+public class Filter extends Unit
     {
     Unit input = new Constant(0.5);
-    
+
     protected double b0;
     protected double[] b;
     protected double[] a;
@@ -19,7 +19,7 @@ public class Filter extends Unit
     protected double x0;
     protected double[] x;
     protected double[] y;
-        
+
     public Filter(int size)
         {
         this.a = new double[size];
@@ -27,21 +27,21 @@ public class Filter extends Unit
         this.x = new double[size];
         this.y = new double[size];
         }
-        
+
     public Unit getInput() { return input; }
     public void setInput(Unit input) { this.input = input; }
 
-    public double tick(long tickCount) 
+    public double tick(long tickCount)
         {
         double x0 = input.getValue() - 0.5;             // center it around 0
-        
+
         // do sum
         double sum = b0*x0;
         for(int i=0;i<b.length;i++){
             sum += b[i] *x[i]-a[i]*y[i];
         }
         /// IMPLEMENT ME
-        
+
         // do shifts
         for(int i=x.length-1; i>0; i--){
             x[i] = x[i-1];

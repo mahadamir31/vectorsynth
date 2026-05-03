@@ -1,4 +1,4 @@
-import synth.*;
+package synth;
 
 /**
    An oscillator which outputs a Bipolar Band-Limited Impulse Train (or BP-BLIT).
@@ -6,19 +6,19 @@ import synth.*;
    by the PHASE MOD.
 */
 
-public class BPBlit extends Blit 
+public class BPBlit extends Blit
     {
     Blit offPhaseBlit = new Blit();
     Unit phaseUnit = new Constant(0.5);
 
-    public void setPhaseUnit(Unit phaseUnit) 
+    public void setPhaseUnit(Unit phaseUnit)
         {
         this.phaseUnit = phaseUnit;
         }
 
     public Unit getPhaseUnit() { return phaseUnit; }
 
-    public void setFrequencyUnit(Unit frequencyUnit) 
+    public void setFrequencyUnit(Unit frequencyUnit)
         {
         super.setFrequencyUnit(frequencyUnit);
         offPhaseBlit.setFrequencyUnit(frequencyUnit);
@@ -30,7 +30,7 @@ public class BPBlit extends Blit
         return blit(tickCount,0)- offPhaseBlit.blit(tickCount, phase);
         }
 
-    public double tick(long tickCount) 
+    public double tick(long tickCount)
         {
         if(valueToHz(getFrequencyUnit().getValue())==0){
             return getValue();

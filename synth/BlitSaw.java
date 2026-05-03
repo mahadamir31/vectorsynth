@@ -1,15 +1,15 @@
-import synth.*;
+package synth;
 
 /**
    An oscillator which outputs a Band-Limited Sawtooth Wave.  This is computed by integrating
-   across a BLIT over time.  The output is then scaled by 0.8 and offset by 0.47. 
+   across a BLIT over time.  The output is then scaled by 0.8 and offset by 0.47.
 */
 
-public class BlitSaw extends Blit 
+public class BlitSaw extends Blit
     {
     double prev = 0;
 
-    protected double blitSaw(long tickCount, double freq) 
+    protected double blitSaw(long tickCount, double freq)
         {
         double period = Config.SAMPLING_RATE/freq;
         double leak = 1.0-(2.0 * freq/Config.SAMPLING_RATE);
@@ -20,7 +20,7 @@ public class BlitSaw extends Blit
         return curr;
         }
 
-    public double tick(long tickCount) 
+    public double tick(long tickCount)
         {
         /// IMPLEMENT ME
         /// Also be sure to scale to the right values, see book

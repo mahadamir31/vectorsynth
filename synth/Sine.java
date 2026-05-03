@@ -1,8 +1,8 @@
-import synth.*;
+package synth;
 
-public class Sine extends Osc 
+public class Sine extends Osc
     {
-    public double tick(long tickCount) 
+    public double tick(long tickCount)
         {
         // IMPLEMENT ME
         // Remember that super.tick(tickCount) will return a value between 0.0 and 1.0

@@ -1,4 +1,4 @@
-import synth.*;
+package synth;
 
 /**
    Hammond Organ Unit
@@ -7,7 +7,7 @@ import synth.*;
    then compute the output from them and return that.
 **/
 
-public class Hammond extends Osc 
+public class Hammond extends Osc
     {
     public static final double[] TONEBAR_FREQUENCIES = new double[]
     {
@@ -21,10 +21,10 @@ public class Hammond extends Osc
     6,
     8
     };
-        
+
     // Number of amplitude units
     public static final int NUM_TONEWHEELS = TONEBAR_FREQUENCIES.length;
-        
+
     // The amplifiers
     public Amplifier[] amplifiers = new Amplifier[NUM_TONEWHEELS];
     // The tone wheels (the actual oscillators which generate the sound)
@@ -33,11 +33,11 @@ public class Hammond extends Osc
     public Mul[] multipliers = new Mul[NUM_TONEWHEELS];
     // The options button
     public Options opt;
-        
+
     public Hammond()
         {
         /// IMPLEMENT ME
-        
+
         // Build the Multipliers.
         // Each multiplier is passed a different Constant
         for(int i=0; i<NUM_TONEWHEELS; i++){
@@ -48,7 +48,7 @@ public class Hammond extends Osc
             // Attach the Multipliers to them as frequency unit
             tonewheels[i] = new Sine();
             tonewheels[i].setFrequencyUnit(multipliers[i]);
-        
+
             // Build the Amplifiers
             // Attach the Tonewheel Sines to them as input
             amplifiers[i] = new Amplifier();
@@ -75,38 +75,38 @@ public class Hammond extends Osc
 
     public Options getOptions() { return opt; }
 
-    public void setFrequencyUnit(Unit frequencyUnit) 
+    public void setFrequencyUnit(Unit frequencyUnit)
         {
         super.setFrequencyUnit(frequencyUnit);
-        
+
         // IMPLEMENT ME
         // All the Multipliers need to have their frequency unit set to this
         for(int i=0; i< NUM_TONEWHEELS;i++){
             multipliers[i].setInput(frequencyUnit);
         }
     }
-            
+
     public void setAmplitudeUnit(int i, Unit amp)
         {
         // IMPLEMENT ME
         // The appropriate Amplifier should have its Amplifier Unit set to this
         amplifiers[i].setAmplitudeUnit(amp);
         }
-        
-    public Unit getAmplitudeUnit(int i) 
+
+    public Unit getAmplitudeUnit(int i)
         {
         // IMPLEMENT ME
         // Return the appropriate Amplifier's amplifier unit
         return amplifiers[i].getAmplitudeUnit();
         }
-        
-    public double tick(long tickCount) 
+
+    public double tick(long tickCount)
         {
         // IMPLEMENT ME
 
         // Update all the multipliers, then all the tonewheels, then all the amplifiers
         // Be sure to call doUpdate(...), NOT tick(...)
-                
+
         // Return the average of the output of the amplifiers
         for(int i=0; i< NUM_TONEWHEELS; i++){
             multipliers[i].doUpdate(tickCount);
@@ -125,7 +125,7 @@ public class Hammond extends Osc
         double avg = sum / NUM_TONEWHEELS;
         return avg + 0.5;
     }
-    
+
 
     static final Object[][] PRESETS = new Object[][]
     {
@@ -228,5 +228,5 @@ public class Hammond extends Osc
     { "004440000 Whiter Shade Of Pale 2 (L)", new int[] { 0, 0, 4, 4, 4, 0, 0, 0, 0 } },
     { "866800000 Wide Leslie", new int[] { 8, 6, 6, 8, 0, 0, 0, 0, 0 } },
     };
-     
+
     }
