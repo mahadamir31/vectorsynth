@@ -96,10 +96,13 @@ public class vectorTest extends Synth {
         setOutput(gainAmp);
 
         // GUI
-        Box padCol = Box.createVerticalBox();
-        padCol.add(new JLabel("Vector"));
-        padCol.add(new VectorPad(vectorOsc));
-        outerBox.add(padCol);
+        // GUI
+        JPanel padWrapper = new JPanel();
+        padWrapper.setLayout(new BorderLayout());
+        padWrapper.add(new JLabel("Vector"), BorderLayout.NORTH);
+        VectorPad pad = new VectorPad(vectorOsc);
+        padWrapper.add(pad, BorderLayout.CENTER);
+        outerBox.add(padWrapper);
 
         Box filterCol = Box.createVerticalBox();
         filterCol.add(new JLabel("Filter"));
