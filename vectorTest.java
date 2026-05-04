@@ -62,6 +62,35 @@ public class vectorTest extends Synth {
         lpf.setResonanceUnit(lpfRes.getUnit());
         units.add(lpf);
 
+        //LFO
+        Dial LFOMulDial = new Dial(0.4);
+        units.add(LFOMulDial.getUnit());
+        outerBox.add(LFOMulDial.getLabelledDial("LFO MUL"));
+
+        Mul LFOMul = new Mul();
+        LFOMul.setInput(LFOMulDial.getUnit());
+        LFOMul.setValue(0.001);
+        units.add(LFOMul);
+        LFO lfo = new LFO();
+        lfo.setFrequencyUnit(LFOMul);
+        units.add(lfo);
+
+        //vibrato
+        Dial vib = new Dial(0.1);
+        units.add(vib.getUnit());
+        outerBox.add(vib.getLabelledDial("vib"));
+
+        Mul pitchMul = new Mul();
+        pitchMul.setInput(lfo);
+        pitchMul.setMultiplier(vib.getUnit());
+        pitchMul.setValue(0.001);
+        units.add(pitchMul);
+
+        Add vibAdd = new Add();
+        vibAdd.setAdder(pitchMul);
+        vibAdd.setInput(lpf);
+        units.add(vibAdd);
+
         // Amp ADSR (same as Project4)
         Dial aAtt = new Dial(0.01); units.add(aAtt.getUnit());
         Dial aDec = new Dial(0.0);  units.add(aDec.getUnit());
@@ -78,7 +107,7 @@ public class vectorTest extends Synth {
         units.add(ampADSR);
 
         Amplifier amp = new Amplifier();
-        amp.setInput(lpf);
+        amp.setInput(vibAdd);
         amp.setAmplitudeUnit(ampADSR);
         units.add(amp);
 

@@ -94,7 +94,7 @@ public class vectorSynth extends Synth
 
             for (int i = 0; i < gainAmps.length; i ++){
                 Dial dial = new Dial(1.0);
-                upGainAmp.setAmplitudeUnit(dial.getUnit());
+                gainAmps[i].setAmplitudeUnit(dial.getUnit());
             }
 
             ADSR upADSR = new ADSR();
