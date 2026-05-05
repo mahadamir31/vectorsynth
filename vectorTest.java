@@ -46,23 +46,6 @@ public class vectorTest extends Synth {
         vectorOsc.setInput3(blit);
         units.add(vectorOsc);
 
-        // Filter (same as Project4)
-        Dial lpfCutoff = new Dial(0.5);
-        units.add(lpfCutoff.getUnit());
-        Dial lpfRes = new Dial(0.0);
-        units.add(lpfRes.getUnit());
-
-        Cube lpfCube = new Cube();
-        lpfCube.setInput(lpfCutoff.getUnit());
-        units.add(lpfCube);
-
-        LPF lpf = new LPF();
-        lpf.setInput(vectorOsc);
-        lpf.setFrequencyUnit(lpfCube);
-        lpf.setResonanceUnit(lpfRes.getUnit());
-        units.add(lpf);
-
-        //LFO
         Dial LFOMulDial = new Dial(0.4);
         units.add(LFOMulDial.getUnit());
         outerBox.add(LFOMulDial.getLabelledDial("LFO MUL"));
@@ -88,8 +71,27 @@ public class vectorTest extends Synth {
 
         Add vibAdd = new Add();
         vibAdd.setAdder(pitchMul);
-        vibAdd.setInput(lpf);
+        vibAdd.setInput(vectorOsc);
         units.add(vibAdd);
+
+        // Filter (same as Project4)
+        Dial lpfCutoff = new Dial(0.5);
+        units.add(lpfCutoff.getUnit());
+        Dial lpfRes = new Dial(0.0);
+        units.add(lpfRes.getUnit());
+
+        Cube lpfCube = new Cube();
+        lpfCube.setInput(lpfCutoff.getUnit());
+        units.add(lpfCube);
+
+        LPF lpf = new LPF();
+        lpf.setInput(vibAdd);
+        lpf.setFrequencyUnit(lpfCube);
+        lpf.setResonanceUnit(lpfRes.getUnit());
+        units.add(lpf);
+
+        //LFO
+        
 
         // Amp ADSR (same as Project4)
         Dial aAtt = new Dial(0.01); units.add(aAtt.getUnit());
@@ -107,7 +109,7 @@ public class vectorTest extends Synth {
         units.add(ampADSR);
 
         Amplifier amp = new Amplifier();
-        amp.setInput(vibAdd);
+        amp.setInput(lpf);
         amp.setAmplitudeUnit(ampADSR);
         units.add(amp);
 
