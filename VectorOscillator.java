@@ -1,7 +1,7 @@
 import synth.*;
 
 // Implements the books vector synthesis equation
-// m(t) = alpha * f1(t) + (1-alpha) * f2(t) + beta * f3(t) + (1-beta) * f4(t)
+// m(t) = alpha * f1(t ) + (1-alpha) * f2(t) + beta * f3(t) + (1-beta) * f4(t)
 
 public class VectorOscillator extends Unit{
     // the four waveform inputs one per corner of the vector pad
@@ -12,21 +12,21 @@ public class VectorOscillator extends Unit{
 
     // alpha = X position on pad (0.0 = left, 1.0 = right)
     // beta  = Y position on pad (0.0 = top,  1.0 = bottom)
-    public volatile double alpha = 0.5;
-    public volatile double beta  = 0.5;
+    public volatile double alpha=0.5;
+    public volatile double beta=0.5;
 
     // input setters 
     public void setInput0(Unit u){
-        input0 = u;
+        input0 =u;
     }
     public void setInput1(Unit u){
-        input1 = u;
+        input1=u;
     }
     public void setInput2(Unit u){
-        input2 = u;
+        input2=u;
     }
     public void setInput3(Unit u){
-        input3 = u;
+        input3=u;
     }
 
     public Unit getInput0(){
@@ -48,15 +48,14 @@ public class VectorOscillator extends Unit{
     }
     @Override
     public double tick(long tickCount){
-        // snapshot volatiles once per tick for consistency
-        double a = alpha;
-        double b = beta;
+        double a =alpha;
+        double b=beta;
 
         // center each input from [0..1] to [-1..+1]
-        double c0 = (input0.getValue() - 0.47) / 0.8;    // BlitSaw: * 0.8 + 0.47
-        double c1 = (input1.getValue() - 0.15) / 0.7;    // BlitSquare: * 0.7 + 0.15
-        double c2 = (input2.getValue() - 0.5)  / 4.0;    // BlitTriangle: * 4.0 + 0.5
-        double c3 = (input3.getValue() - 0.5)  / 0.5;    // Blit: * 0.5 + 0.5
+        double c0=(input0.getValue()-0.47) /0.8; // BlitSaw: * 0.8 + 0.47
+        double c1=(input1.getValue()-0.15)/0.7; // BlitSquare: * 0.7 + 0.15
+        double c2=(input2.getValue()-0.5)/4.0; // BlitTriangle: * 4.0 + 0.5
+        double c3=(input3.getValue()-0.5)/0.5; // Blit: * 0.5 + 0.5
 
         // book equation: alpha*f1 + (1-alpha)*f2 + beta*f3 + (1-beta)*f4
         // Max weight sum = 2.0, so divide by 2 to keep output in [-1..+1]
