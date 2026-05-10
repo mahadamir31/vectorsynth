@@ -1,75 +1,68 @@
 import synth.*;
 
-// Implements the books vector synthesis equation
-// m(t) = alpha * f1(t ) + (1-alpha) * f2(t) + beta * f3(t) + (1-beta) * f4(t)
+public class VectorOscillator extends Unit {
+    private Unit input0 = new Constant(0.5);
+    private Unit input1 = new Constant(0.5);
+    private Unit input2 = new Constant(0.5);
+    private Unit input3 = new Constant(0.5);
 
-public class VectorOscillator extends Unit{
-    // the four waveform inputs one per corner of the vector pad
-    private Unit input0=new Constant(0.5); // top left corner
-    private Unit input1=new Constant(0.5); // top right corner
-    private Unit input2=new Constant(0.5); // bottom left corner
-    private Unit input3=new Constant(0.5); // bottom right corner
+    public volatile double alpha = 0.5;
+    public volatile double beta  = 0.5;
 
-    // alpha = X position on pad (0.0 = left, 1.0 = right)
-    // beta  = Y position on pad (0.0 = top,  1.0 = bottom)
-    public volatile double alpha=0.5;
-    public volatile double beta=0.5;
+    // running min/max for each input
+    private double[] min = {Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
+    private double[] max = {-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
 
-    // input setters 
-    public void setInput0(Unit u){
-        input0 =u;
-    }
-    public void setInput1(Unit u){
-        input1=u;
-    }
-    public void setInput2(Unit u){
-        input2=u;
-    }
-    public void setInput3(Unit u){
-        input3=u;
-    }
+    // how quickly the tracked range decays back toward center (prevents stale ranges after osc swap)
+    private static final double DECAY = 0.999995;
 
-    public Unit getInput0(){
-        return input0;
-    }
-    public Unit getInput1(){
-        return input1;
-    }
-    public Unit getInput2(){
-        return input2;
-    }
-    public Unit getInput3(){
-        return input3;
+    public void setInput0(Unit u) { input0 = u; resetRange(0); }
+    public void setInput1(Unit u) { input1 = u; resetRange(1); }
+    public void setInput2(Unit u) { input2 = u; resetRange(2); }
+    public void setInput3(Unit u) { input3 = u; resetRange(3); }
+
+    public Unit getInput0() { return input0; }
+    public Unit getInput1() { return input1; }
+    public Unit getInput2() { return input2; }
+    public Unit getInput3() { return input3; }
+
+    public void setPosition(double a, double b) { alpha = a; beta = b; }
+
+    private void resetRange(int i) {
+        min[i] = Double.MAX_VALUE;
+        max[i] = -Double.MAX_VALUE;
     }
 
-    public void setPosition(double a, double b){
-        alpha=a;
-        beta=b;
+    private double normalize(double val, int i) {
+        // decay range slowly toward center to handle osc swaps
+        min[i] = Math.min(min[i], val) * DECAY + 0.5 * (1.0 - DECAY);
+        max[i] = Math.max(max[i], val) * DECAY + 0.5 * (1.0 - DECAY);
+
+        double range = max[i] - min[i];
+        if (range < 1e-6) return 0.0; // not enough data yet, output silence
+        // map to [-1..+1]
+        return ((val - min[i]) / range) * 2.0 - 1.0;
     }
+
     @Override
-    public double tick(long tickCount){
-        double a =alpha;
-        double b=beta;
+    public double tick(long tickCount) {
+        double a = alpha;
+        double b = beta;
 
-        // center each input from [0..1] to [-1..+1]
-        double c0=(input0.getValue()-0.47) /0.8; // BlitSaw: * 0.8 + 0.47
-        double c1=(input1.getValue()-0.15)/0.7; // BlitSquare: * 0.7 + 0.15
-        double c2=(input2.getValue()-0.5)/4.0; // BlitTriangle: * 4.0 + 0.5
-        double c3=(input3.getValue()-0.5)/0.5; // Blit: * 0.5 + 0.5
+        double c0 = normalize(input0.getValue(), 0);
+        double c1 = normalize(input1.getValue(), 1);
+        double c2 = normalize(input2.getValue(), 2);
+        double c3 = normalize(input3.getValue(), 3);
 
-        // book equation: alpha*f1 + (1-alpha)*f2 + beta*f3 + (1-beta)*f4
-        // Max weight sum = 2.0, so divide by 2 to keep output in [-1..+1]
-        //double mixed = (a*c0+(1.0-a)*c1+b*c2+(1.0 -b) * c3)/2.0;
+        // bilinear interpolation
+        double top    = (1.0 - a) * c0 + a * c1;
+        double bottom = (1.0 - a) * c2 + a * c3;
+        double mixed  = (1.0 - b) * top + b * bottom;
 
-        // bilinear interpolation, each corner is purely at its position
-        double top= (1.0-a)*c0+a *c1; // blend top 2
-        double bottom=(1.0-a) *c2+a*c3; // blend bottom 2
-        double mixed = (1.0-b) * top + b*bottom; // blend top/bottom
-
-        // clamp and return to [0..1]
-        double out=mixed *0.5 +0.5;
-        if (out< 0.0) out= 0.0;
-        if (out > 1.0) out=1.0;
+        // convert back to [0..1]
+        double out = mixed * 0.5 + 0.5;
+        if (out < 0.0) out = 0.0;
+        if (out > 1.0) out = 1.0;
         return out;
     }
 }
