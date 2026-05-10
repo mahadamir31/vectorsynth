@@ -56,10 +56,10 @@ public class VectorPad extends JPanel{
         // corner labels
         g2.setFont(new Font(Font.SANS_SERIF,Font.BOLD,11));
         g2.setColor(new Color(140,140,200));
-        g2.drawString("Saw",6,16);
-        g2.drawString("Square",w-52, 16);
-        g2.drawString("Triangle",6,h - 6);
-        g2.drawString("Blit",w - 30,h - 6);
+        g2.drawString("1",6,16);
+        g2.drawString("2",w-52, 16);
+        g2.drawString("3",6,h - 6);
+        g2.drawString("4",w - 30,h - 6);
 
         // dot shadow
         int dotX=(int)(alpha*w);
