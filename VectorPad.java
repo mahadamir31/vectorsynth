@@ -97,7 +97,7 @@ public class VectorPad extends JPanel{
         int w=getWidth();
         int h =getHeight();
         alpha =Math.max(0.0, Math.min(1.0,(double) e.getX()/w));
-        beta= Math.max(0.0, Math.min(1.0,(double) e.getY()/h));
+        beta= Math.max(0.0, Math.min(1.0,(double) e.getY()/(h-30)));
         //System.err.println("w=" + w + " h=" + h + " x=" + e.getX() + " y=" + e.getY() + " alpha=" + alpha + " beta=" + beta);
         oscillator.setPosition(alpha, beta);
         if(rec){
@@ -116,27 +116,27 @@ public class VectorPad extends JPanel{
         int h=getHeight();
         // background
         g2.setColor(new Color(20,20,30));
-        g2.fillRect(0,0,w,h);
+        g2.fillRect(0,0,w,h-30);
         // crosshair
         g2.setColor(new Color(50,50,70));
-        g2.drawLine(w/2,0,w/2, h);
-        g2.drawLine(0,h/2,w, h/2);
+        g2.drawLine(w/2,0,w/2, h-30);
+        g2.drawLine(0,h/2,w, h-30);
 
         // border
         g2.setColor(new Color(80,80,120));
-        g2.drawRect(0,0,w-1,h-1);
+        g2.drawRect(0,0,w-1,h-31);
 
         // corner labels
         g2.setFont(new Font(Font.SANS_SERIF,Font.BOLD,11));
         g2.setColor(new Color(140,140,200));
         g2.drawString("1",6,16);
-        g2.drawString("2",w-52, 16);
+        g2.drawString("2",w-10, 16);
         g2.drawString("3",6,h - 6);
-        g2.drawString("4",w - 30,h - 6);
+        g2.drawString("4",w - 10,h - 6);
 
         // dot shadow
         int dotX=(int)(alpha*w);
-        int dotY=(int)(beta* h);
+        int dotY=(int)(beta* (h-30));
         g2.setColor(new Color(0,0,0,100));
         g2.fillOval(dotX-7, dotY -6, 14,14);
 
@@ -149,13 +149,13 @@ public class VectorPad extends JPanel{
     }
 
     @Override public Dimension getPreferredSize(){
-        return new Dimension(210,270);
+        return new Dimension(210,260);
     }
     @Override public Dimension getMinimumSize(){
-        return new Dimension(210,270);
+        return new Dimension(210,260);
     }
     @Override public Dimension getMaximumSize(){
-        return new Dimension(210,270);
+        return new Dimension(210,260);
     }
 }
 
