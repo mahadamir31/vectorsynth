@@ -170,6 +170,20 @@ public class vectorTest extends Synth implements ItemListener{
         padWrapper.add(new JLabel("Vector"), BorderLayout.NORTH);
         VectorPad pad = new VectorPad(vectorOsc);
         padWrapper.add(pad, BorderLayout.CENTER);
+        // buttons below pad
+        JButton recBtn   = new JButton("Rec");
+        JButton playBtn  = new JButton("Play");
+        JButton clearBtn = new JButton("Clear");
+        recBtn.addActionListener(e   -> pad.startRecording());
+        playBtn.addActionListener(e  -> pad.startPlayback());
+        clearBtn.addActionListener(e -> pad.clearTrajectory());
+
+        JPanel btnPanel = new JPanel(new FlowLayout());
+        btnPanel.add(recBtn);
+        btnPanel.add(playBtn);
+        btnPanel.add(clearBtn);
+        padWrapper.add(btnPanel, BorderLayout.SOUTH);
+
         outerBox.add(padWrapper);
 
         Box filterCol = Box.createVerticalBox();

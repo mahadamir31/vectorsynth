@@ -38,38 +38,6 @@ public class VectorPad extends JPanel{
                 update(e);
             }
         });
-
-        //buttons
-        JPanel btnPanel= new JPanel();
-        JButton recordBtn = new JButton("record");
-        JButton playBtn = new JButton("play");
-        JButton clearbtn = new JButton("clear");
-        btnPanel.add(recordBtn);
-        btnPanel.add(playBtn);
-        btnPanel.add(clearbtn);
-        setLayout(new BorderLayout());
-        add(btnPanel,BorderLayout.SOUTH);
-
-        recordBtn.addActionListener(e ->{
-            frames.clear();
-            rec =true;
-            play= true;
-            recStart= System.currentTimeMillis();
-        });
-        playBtn.addActionListener(e ->{
-            if(frames.isEmpty()){
-                return;
-            }
-            rec = false;
-            play= true;
-            playTimer.start();
-        });
-        clearbtn.addActionListener(e ->{
-            frames.clear();
-            rec = false;
-            play=false;
-            if(playTimer!=null) playTimer.stop();
-        });
         playTimer=new javax.swing.Timer(16,e ->{
             if(frames.isEmpty()){
                 return;
@@ -92,12 +60,35 @@ public class VectorPad extends JPanel{
             repaint();
         });
     }
+    public void startRecording(){
+        frames.clear();
+        rec=true;
+        play=false;
+        recStart=System.currentTimeMillis();
+    }
+    public void startPlayback(){
+        if(frames.isEmpty()){
+            return;
+        }
+        rec=false;
+        play=true;
+        recStart=System.currentTimeMillis();
+        playTimer.start();
+    }
+    public void clearTrajectory(){
+        frames.clear();
+        rec=false;
+        play=false;
+        if(playTimer!=null){
+            playTimer.stop();
+        }
+    }
 
     private void update(MouseEvent e){
         int w=getWidth();
         int h =getHeight();
         alpha =Math.max(0.0, Math.min(1.0,(double) e.getX()/w));
-        beta= Math.max(0.0, Math.min(1.0,(double) e.getY()/(h-30)));
+        beta= Math.max(0.0, Math.min(1.0,(double) e.getY()/h));
         //System.err.println("w=" + w + " h=" + h + " x=" + e.getX() + " y=" + e.getY() + " alpha=" + alpha + " beta=" + beta);
         oscillator.setPosition(alpha, beta);
         if(rec){
@@ -116,15 +107,15 @@ public class VectorPad extends JPanel{
         int h=getHeight();
         // background
         g2.setColor(new Color(20,20,30));
-        g2.fillRect(0,0,w,h-30);
+        g2.fillRect(0,0,w,h);
         // crosshair
         g2.setColor(new Color(50,50,70));
-        g2.drawLine(w/2,0,w/2, h-30);
-        g2.drawLine(0,h/2,w, h-30);
+        g2.drawLine(w/2,0,w/2, h);
+        g2.drawLine(0,h/2,w, h/2);
 
         // border
         g2.setColor(new Color(80,80,120));
-        g2.drawRect(0,0,w-1,h-31);
+        g2.drawRect(0,0,w-1,h-1);
 
         // corner labels
         g2.setFont(new Font(Font.SANS_SERIF,Font.BOLD,11));
@@ -136,7 +127,7 @@ public class VectorPad extends JPanel{
 
         // dot shadow
         int dotX=(int)(alpha*w);
-        int dotY=(int)(beta* (h-30));
+        int dotY=(int)(beta* h);
         g2.setColor(new Color(0,0,0,100));
         g2.fillOval(dotX-7, dotY -6, 14,14);
 
@@ -149,13 +140,13 @@ public class VectorPad extends JPanel{
     }
 
     @Override public Dimension getPreferredSize(){
-        return new Dimension(210,260);
+        return new Dimension(210,210);
     }
     @Override public Dimension getMinimumSize(){
-        return new Dimension(210,260);
+        return new Dimension(210,210);
     }
     @Override public Dimension getMaximumSize(){
-        return new Dimension(210,260);
+        return new Dimension(210,210);
     }
 }
 
