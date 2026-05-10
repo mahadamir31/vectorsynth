@@ -149,13 +149,13 @@ public class VectorPad extends JPanel{
     }
 
     @Override public Dimension getPreferredSize(){
-        return new Dimension(210,240);
+        return new Dimension(210,270);
     }
     @Override public Dimension getMinimumSize(){
-        return new Dimension(210,240);
+        return new Dimension(210,270);
     }
     @Override public Dimension getMaximumSize(){
-        return new Dimension(210,240);
+        return new Dimension(210,270);
     }
 }
 
