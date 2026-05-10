@@ -1,49 +1,89 @@
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import synth.*;
 
-public class vectorTest extends Synth {
+public class vectorTest extends Synth implements ItemListener{
+
+    private String[] choices = {"Sine", "Triangle", "Square", "Blit", "Saw"};
+    private JLabel osc1label = new JLabel("Oscillator 1:");
+    private JLabel osc2label = new JLabel("Oscillator 2:");
+    private JLabel osc3label = new JLabel("Oscillator 3:");
+    private JLabel osc4label = new JLabel("Oscillator 4:");
+    final JComboBox<String> cb1 = new JComboBox<String>(choices);
+    final JComboBox<String> cb2 = new JComboBox<String>(choices);
+    final JComboBox<String> cb3 = new JComboBox<String>(choices);
+    final JComboBox<String> cb4 = new JComboBox<String>(choices);
+    private VectorOscillator vectorOsc = new VectorOscillator();
+
+    private MidiUnit midi;
+    private Osc osc1;
+    private Osc osc2;
+    private Osc osc3;
+    private Osc osc4;
+    boolean setUp = false;
+
+    private JFrame frame;
 
     public static void main(String[] args) {
         Synth.run(new vectorTest(), args);
     }
 
-    public void setup() {
-        MidiUnit midi = new MidiUnit(getMidi());
+    public void setup(){
+        cb1.addItemListener(this);
+        cb2.addItemListener(this);
+        cb3.addItemListener(this);
+        cb4.addItemListener(this);
+        setup(null, null, null, null);
+    }
+
+    public void setup(Osc newOsc1, Osc newOsc2, Osc newOsc3, Osc newOsc4) {
+        units.clear();
+        midi = new MidiUnit(getMidi());
         units.add(midi);
         Gate gate = new Gate(midi);
         units.add(gate);
 
-        JFrame frame = new JFrame("Vector Synth");
+        if (frame != null){frame.dispose();}
+        frame = new JFrame("Vector Synth");
         frame.setLayout(new BorderLayout());
         Box outerBox = Box.createHorizontalBox();
         frame.add(outerBox, BorderLayout.CENTER);
 
-        // Four oscillators — one per corner
-        BlitSaw saw = new BlitSaw();
-        saw.setFrequencyUnit(midi);
-        units.add(saw);
+        if (!setUp || newOsc1 == null){
+            osc1 = new BlitSaw();
+            osc1.setFrequencyUnit(midi);
+            units.add(osc1);
 
-        BlitSquare square = new BlitSquare();
-        square.setFrequencyUnit(midi);
-        square.setPhaseUnit(new Constant(0.5));
-        units.add(square);
+            BlitSquare square = new BlitSquare();
+            square.setFrequencyUnit(midi);
+            square.setPhaseUnit(new Constant(0.5));
+            osc2 = square;
+            units.add(osc2);
 
-        BlitTriangle triangle = new BlitTriangle();
-        triangle.setFrequencyUnit(midi);
-        triangle.setPhaseUnit(new Constant(0.5));
-        units.add(triangle);
+            BlitTriangle triangle = new BlitTriangle();
+            triangle.setFrequencyUnit(midi);
+            triangle.setPhaseUnit(new Constant(0.5));
+            osc3 = triangle;
+            units.add(osc3);
 
-        Blit blit = new Blit();
-        blit.setFrequencyUnit(midi);
-        units.add(blit);
+            osc4 = new Blit();
+            osc4.setFrequencyUnit(midi);
+            units.add(osc4);
+            setUp = true;
+        }
+        else{
+            osc1 = (newOsc1 != null) ? newOsc1 : osc1;
+            osc2 = (newOsc2 != null) ? newOsc2 : osc2;
+            osc3 = (newOsc3 != null) ? newOsc3 : osc3;
+            osc4 = (newOsc4 != null) ? newOsc4 : osc4;
+        }
 
         // Vector oscillator blends the four
-        VectorOscillator vectorOsc = new VectorOscillator();
-        vectorOsc.setInput0(saw);
-        vectorOsc.setInput1(square);
-        vectorOsc.setInput2(triangle);
-        vectorOsc.setInput3(blit);
+        vectorOsc.setInput0(osc1);
+        vectorOsc.setInput1(osc2);
+        vectorOsc.setInput2(osc3);
+        vectorOsc.setInput3(osc4);
         units.add(vectorOsc);
 
         Dial LFOMulDial = new Dial(0.4);
@@ -90,8 +130,6 @@ public class vectorTest extends Synth {
         lpf.setResonanceUnit(lpfRes.getUnit());
         units.add(lpf);
 
-        //LFO
-        
 
         // Amp ADSR (same as Project4)
         Dial aAtt = new Dial(0.01); units.add(aAtt.getUnit());
@@ -154,7 +192,92 @@ public class vectorTest extends Synth {
         outputCol.add(osc);
         outerBox.add(outputCol);
 
+        //OSC choice
+        osc1label.setVisible(true);
+        outerBox.add(osc1label);
+        outerBox.add(cb1);
+
+        osc2label.setVisible(true);
+        outerBox.add(osc2label);
+        outerBox.add(cb2);
+
+        osc3label.setVisible(true);
+        outerBox.add(osc3label);
+        outerBox.add(cb3);
+
+        osc4label.setVisible(true);
+        outerBox.add(osc4label);
+        outerBox.add(cb4);
+
         frame.pack();
         frame.setVisible(true);
     }
+    public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() != ItemEvent.SELECTED) return;
+        JComboBox<String> src = (JComboBox<String>) e.getSource();
+        Osc newOsc = buildOsc((String) src.getSelectedItem());
+        if (newOsc == null) return;
+
+        if (e.getSource() == cb1) { units.remove(osc1); osc1 = newOsc; units.add(osc1); vectorOsc.setInput0(osc1); }
+        else if (e.getSource() == cb2) { units.remove(osc2); osc2 = newOsc; units.add(osc2); vectorOsc.setInput1(osc2); }
+        else if (e.getSource() == cb3) { units.remove(osc3); osc3 = newOsc; units.add(osc3); vectorOsc.setInput2(osc3); }
+        else if (e.getSource() == cb4) { units.remove(osc4); osc4 = newOsc; units.add(osc4); vectorOsc.setInput3(osc4); }
+}
+    // public void itemStateChanged(ItemEvent e)
+    // {
+    //     if (e.getStateChange() != ItemEvent.SELECTED) {return;}
+    //     Osc newOsc = new Sine();
+    //     JComboBox<String> src = (JComboBox<String>)e.getSource();
+    //     Object item = src.getSelectedItem();
+    //     System.out.println(item.toString());
+    //     if (item.equals("Sine")){
+    //         newOsc = new Sine();
+    //         newOsc.setFrequencyUnit(midi);
+    //     }
+    //     else if(item.equals("Saw")){
+    //         newOsc = new BlitSaw();
+    //         newOsc.setFrequencyUnit(midi);
+    //     }
+    //     else if(item.equals("Square")){
+    //         BlitSquare square = new BlitSquare();
+    //         square.setFrequencyUnit(midi);
+    //         square.setPhaseUnit(new Constant(0.5));
+    //         newOsc = square;
+    //     }
+    //     else if(item.equals("Triangle")){
+    //         BlitTriangle tri = new BlitTriangle();
+    //         tri.setFrequencyUnit(midi);
+    //         tri.setPhaseUnit(new Constant(0.5));
+    //         newOsc = tri;
+    //     }
+    //     else if(item.equals("Blit")){
+    //         BPBlit blit = new BPBlit();
+    //         blit.setFrequencyUnit(midi);
+    //         newOsc = blit;
+    //     }
+    //     // if the state combobox is changed
+    //     if (e.getSource() == cb1){
+    //         setup(newOsc, osc2, osc3, osc4);
+    //     }
+    //     if (e.getSource() == cb2){
+    //         setup(osc1, newOsc, osc3, osc4);
+    //     }
+    //     if (e.getSource() == cb3){
+    //         setup(osc1, osc2, newOsc, osc4);
+    //     }
+    //     if (e.getSource() == cb4){
+    //         setup(osc1, osc2, osc3, newOsc);
+    //     }
+    // }
+
+    private Osc buildOsc(String type) {
+    switch (type) {
+        case "Sine":     Sine s = new Sine(); s.setFrequencyUnit(midi); return s;
+        case "Saw":      BlitSaw saw = new BlitSaw(); saw.setFrequencyUnit(midi); return saw;
+        case "Square":   BlitSquare sq = new BlitSquare(); sq.setFrequencyUnit(midi); sq.setPhaseUnit(new Constant(0.5)); return sq;
+        case "Triangle": BlitTriangle tri = new BlitTriangle(); tri.setFrequencyUnit(midi); tri.setPhaseUnit(new Constant(0.5)); return tri;
+        case "Blit":     BPBlit b = new BPBlit(); b.setFrequencyUnit(midi); return b;
+        default: return null;
+    }
+}
 }
